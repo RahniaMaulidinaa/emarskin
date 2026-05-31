@@ -1,0 +1,78 @@
+{% extends 'reservasi/base.html' %}
+{% block title %}Dashboard Admin - Emarskin{% endblock %}
+{% block content %}
+
+<div class="mb-4">
+  <p class="page-subtitle text-uppercase" style="letter-spacing:2px;">✦ Panel Admin</p>
+  <h3 class="page-title">Dashboard</h3>
+  <div class="divider-peach"></div>
+</div>
+
+<div class="row g-3 mb-5">
+  <div class="col-md-3">
+    <div class="card-emarskin p-4 text-center">
+      <div style="font-size:32px; margin-bottom:8px;">📋</div>
+      <div style="font-size:11px; color:#a08070; text-transform:uppercase; letter-spacing:1px;">Total Reservasi</div>
+      <div class="fw-bold" style="font-size:36px; color:var(--brown-soft);">{{ total }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card-emarskin p-4 text-center">
+      <div style="font-size:32px; margin-bottom:8px;">⏳</div>
+      <div style="font-size:11px; color:#a08070; text-transform:uppercase; letter-spacing:1px;">Menunggu</div>
+      <div class="fw-bold" style="font-size:36px; color:#e65100;">{{ menunggu }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card-emarskin p-4 text-center">
+      <div style="font-size:32px; margin-bottom:8px;">✅</div>
+      <div style="font-size:11px; color:#a08070; text-transform:uppercase; letter-spacing:1px;">Terkonfirmasi</div>
+      <div class="fw-bold" style="font-size:36px; color:#2e7d32;">{{ terkonfirmasi }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card-emarskin p-4 text-center">
+      <div style="font-size:32px; margin-bottom:8px;">👤</div>
+      <div style="font-size:11px; color:#a08070; text-transform:uppercase; letter-spacing:1px;">Pelanggan</div>
+      <div class="fw-bold" style="font-size:36px; color:var(--gold);">{{ pelanggan_count }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="fw-bold mb-0" style="color:var(--brown-soft);">Antrian Menunggu (FCFS)</h5>
+  <a href="{% url 'kelola_reservasi' %}" class="btn-peach" style="text-decoration:none; font-size:13px; padding:8px 20px;">Lihat Semua</a>
+</div>
+
+<div class="card-emarskin overflow-hidden">
+  <table class="table table-emarskin mb-0">
+    <thead>
+      <tr>
+        <th>No. Antrian</th>
+        <th>Pelanggan</th>
+        <th>Treatment</th>
+        <th>Tanggal</th>
+        <th>Jam</th>
+        <th>Waktu Pesan</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in antrian_hari_ini %}
+      <tr>
+        <td class="fw-bold" style="color:var(--peach-deep);">#{{ r.nomor_antrian }}</td>
+        <td>{{ r.pelanggan.nama }}</td>
+        <td>{{ r.treatment.nama_treatment }}</td>
+        <td>{{ r.tanggal_reservasi|date:"d M Y" }}</td>
+        <td>{{ r.jam_reservasi|time:"H:i" }}</td>
+        <td>{{ r.waktu_pesan|date:"d M Y H:i" }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" class="text-center py-4" style="color:#a08070;">🌸 Tidak ada antrian saat ini</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

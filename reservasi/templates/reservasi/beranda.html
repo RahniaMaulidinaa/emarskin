@@ -1,0 +1,104 @@
+{% extends 'reservasi/base.html' %}
+{% load static %}
+{% block title %}Beranda - Emarskin Beauty Point{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<div class="rounded-4 overflow-hidden mb-5 position-relative"
+     style="background: linear-gradient(135deg, #FFF0ED 0%, #FFE4DE 50%, #FADADD 100%); border: 1px solid #f5d5cc;">
+  <div class="row align-items-center g-0" style="min-height:340px;">
+    <div class="col-md-7 p-5">
+      <p class="section-label mb-3">✦ Klinik Kecantikan Premium</p>
+      <h1 style="color:var(--brown); font-size:40px; line-height:1.2;" class="mb-3">
+        Cantik Alami,<br>
+        <span style="color:var(--peach-deep);">Percaya Diri Selalu</span>
+      </h1>
+      <p style="color:#8B6355; font-size:15px; line-height:1.8;" class="mb-4">
+        Reservasi layanan perawatan kecantikan secara online.<br>
+        Mudah, cepat, dan teratur dengan sistem antrian otomatis.
+      </p>
+      <div class="d-flex gap-3 flex-wrap">
+        <a href="{% url 'reservasi_form' %}" class="btn-peach">✨ Reservasi Sekarang</a>
+        <a href="{% url 'register' %}" class="btn-outline-peach">Daftar Gratis</a>
+      </div>
+    </div>
+    <div class="col-md-5 text-center py-4 d-none d-md-flex align-items-center justify-content-center">
+      <img src="{% static 'reservasi/img/logo.png' %}" alt="Emarskin"
+           style="height:200px; filter: drop-shadow(0 8px 24px rgba(180,80,60,.15));"
+           onerror="this.style.display='none'">
+    </div>
+  </div>
+</div>
+
+<!-- KEUNGGULAN -->
+<div class="row g-3 mb-5">
+  <div class="col-md-4">
+    <div class="card-em p-4 text-center h-100" style="border-top: 3px solid var(--peach-mid);">
+      <div style="font-size:38px; margin-bottom:12px;">🌸</div>
+      <h6 class="fw-bold mb-2" style="color:var(--brown);">Tenaga Profesional</h6>
+      <p class="text-muted small mb-0">Ditangani beautician berpengalaman dan bersertifikat.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card-em p-4 text-center h-100" style="border-top: 3px solid var(--gold-light);">
+      <div style="font-size:38px; margin-bottom:12px;">⏱️</div>
+      <h6 class="fw-bold mb-2" style="color:var(--brown);">Antrian FCFS Otomatis</h6>
+      <p class="text-muted small mb-0">Sistem antrian adil berdasarkan urutan waktu pemesanan.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card-em p-4 text-center h-100" style="border-top: 3px solid var(--peach-deep);">
+      <div style="font-size:38px; margin-bottom:12px;">💆‍♀️</div>
+      <h6 class="fw-bold mb-2" style="color:var(--brown);">Produk Premium</h6>
+      <p class="text-muted small mb-0">Menggunakan produk perawatan kulit berkualitas tinggi.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LAYANAN -->
+<div class="mb-4">
+  <p class="section-label">✦ Apa yang Kami Tawarkan</p>
+  <h3 class="page-title">Layanan Kami</h3>
+  <div class="divider-peach"></div>
+</div>
+
+<div class="row g-4 mb-5">
+  {% for t in treatments %}
+  <div class="col-md-4">
+    <div class="card-em h-100">
+      <div style="height:5px; background:linear-gradient(90deg, var(--peach-mid), var(--gold-light)); border-radius:16px 16px 0 0;"></div>
+      <div class="p-4">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h6 class="fw-bold mb-0" style="color:var(--brown); font-size:15px;">{{ t.nama_treatment }}</h6>
+          <span style="background:var(--peach); color:var(--peach-deep); border-radius:20px; font-size:11px; padding:4px 10px; font-weight:600; white-space:nowrap;">
+            {{ t.durasi }} mnt
+          </span>
+        </div>
+        <p class="mb-3" style="color:#9a7060; font-size:13px; line-height:1.7;">{{ t.deskripsi }}</p>
+        <div class="d-flex justify-content-between align-items-center pt-2" style="border-top:1px solid #fdf0ec;">
+          <span class="fw-bold" style="color:var(--gold); font-size:16px;">
+            Rp {{ t.harga|floatformat:"0" }}
+          </span>
+          <a href="{% url 'reservasi_form' %}" style="color:var(--peach-deep); font-size:13px; font-weight:600; text-decoration:none;">
+            Pesan →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="alert alert-warning">Belum ada layanan tersedia.</div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- CTA BOTTOM -->
+<div class="rounded-4 p-5 text-center mb-4"
+     style="background: linear-gradient(135deg, #FADADD, #F0A898); border: 1px solid #f0c0b0;">
+     <h3 style="font-family:'Playfair Display',serif; color:var(--brown);" class="mb-2">Siap Tampil Cantik?</h3>
+     <p style="color:#8B5E52; font-size:14px;" class="mb-4">Reservasi sekarang dan dapatkan pelayanan terbaik dari Emarskin Beauty Point.</p>
+  <a href="{% url 'reservasi_form' %}" class="btn-gold" style="font-size:14px;">✨ Mulai Reservasi</a>
+</div>
+
+{% endblock %}

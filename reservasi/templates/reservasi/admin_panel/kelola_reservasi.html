@@ -1,0 +1,83 @@
+{% extends 'reservasi/base.html' %}
+{% block title %}Kelola Reservasi - Emarskin{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <div>
+    <p class="page-subtitle text-uppercase mb-0" style="letter-spacing:2px; font-size:11px;">✦ Panel Admin</p>
+    <h3 class="page-title mb-0">Kelola Reservasi</h3>
+    <div class="divider-peach"></div>
+  </div>
+  <span class="text-muted small">Diurutkan berdasarkan waktu pesan (FCFS)</span>
+</div>
+
+<div class="card-emarskin overflow-hidden">
+  <table class="table table-emarskin mb-0">
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>Pelanggan</th>
+        <th>Treatment</th>
+        <th>Tanggal</th>
+        <th>Jam</th>
+        <th>Waktu Pesan</th>
+        <th>Status</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in reservasis %}
+      <tr>
+        <td class="fw-bold" style="color:var(--peach-deep);">#{{ r.nomor_antrian }}</td>
+        <td>{{ r.pelanggan.nama }}</td>
+        <td>{{ r.treatment.nama_treatment }}</td>
+        <td>{{ r.tanggal_reservasi|date:"d M Y" }}</td>
+        <td>{{ r.jam_reservasi|time:"H:i" }}</td>
+        <td>{{ r.waktu_pesan|date:"d M Y H:i" }}</td>
+        <td>
+          <span class="status-{{ r.status_reservasi }}">
+            {% if r.status_reservasi == 'menunggu' %}⏳ Menunggu
+            {% elif r.status_reservasi == 'terkonfirmasi' %}✅ Terkonfirmasi
+            {% elif r.status_reservasi == 'selesai' %}🎉 Selesai
+            {% elif r.status_reservasi == 'dibatalkan' %}❌ Penuh/Dibatalkan
+            {% endif %}
+          </span>
+        </td>
+        <td>
+          {% if r.status_reservasi == 'menunggu' %}
+            <a href="{% url 'konfirmasi_reservasi' r.pk %}"
+               class="btn btn-sm mb-1"
+               style="background:#e8f5e9; color:#2e7d32; border-radius:20px; font-size:12px; font-weight:500;"
+               onclick="return confirm('Konfirmasi reservasi #{{ r.nomor_antrian }}?')">
+              ✓ Konfirmasi
+            </a>
+            <a href="{% url 'batalkan_reservasi' r.pk %}"
+               class="btn btn-sm"
+               style="background:#fce4ec; color:#c62828; border-radius:20px; font-size:12px; font-weight:500;"
+               onclick="return confirm('Batalkan reservasi ini?')">
+              ✗ Batalkan
+            </a>
+          {% elif r.status_reservasi == 'terkonfirmasi' %}
+            <a href="{% url 'selesai_reservasi' r.pk %}"
+               class="btn btn-sm"
+               style="background:#e3f2fd; color:#1565c0; border-radius:20px; font-size:12px; font-weight:500;"
+               onclick="return confirm('Tandai selesai?')">
+              ✔ Selesai
+            </a>
+          {% elif r.status_reservasi == 'dibatalkan' %}
+            <span style="color:#c62828; font-size:12px; font-style:italic;">❌ Penuh/Dibatalkan</span>
+          {% elif r.status_reservasi == 'selesai' %}
+            <span style="color:#2e7d32; font-size:12px; font-style:italic;">🎉 Layanan selesai</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="8" class="text-center py-4" style="color:#a08070;">🌸 Belum ada data reservasi</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

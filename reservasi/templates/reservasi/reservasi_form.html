@@ -1,0 +1,207 @@
+{% extends 'reservasi/base.html' %}
+{% block title %}Reservasi - Emarskin{% endblock %}
+{% block content %}
+<div class="row justify-content-center py-4">
+  <div class="col-md-7">
+    <div class="text-center mb-4">
+      <p class="section-label">✦ Pelanggan</p>
+      <h3 class="page-title">Form Reservasi</h3>
+      <div class="divider-peach mx-auto"></div>
+      <p class="page-sub">Pilih layanan dan jadwal yang kamu inginkan</p>
+    </div>
+
+    <div class="card-em p-4">
+
+      <!-- Info FCFS -->
+      <div class="d-flex align-items-start gap-3 p-3 rounded-3 mb-4"
+           style="background:#fffbf0; border-left:4px solid var(--gold-light);">
+        <span style="font-size:20px;">ℹ️</span>
+        <div>
+          <div class="fw-semibold" style="font-size:13px; color:var(--brown);">Sistem Antrian FCFS</div>
+          <div style="font-size:12px; color:#a08070; line-height:1.6;">
+            Nomor antrian ditentukan otomatis berdasarkan waktu pemesanan.<br>
+            <strong>Jam operasional:</strong> 09:00 – 18:00 &nbsp;|&nbsp;
+            <strong>Close order:</strong> 16:30
+          </div>
+        </div>
+      </div>
+
+      <form method="post" id="formReservasi">
+        {% csrf_token %}
+
+        <!-- Pilih Treatment -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold" style="font-size:13px; color:var(--brown);">
+            Jenis Treatment <span class="text-danger">*</span>
+          </label>
+          <select name="treatment" id="selectTreatment" class="form-select" required>
+            <option value="">-- Pilih Treatment --</option>
+            {% for t in treatments %}
+            <option value="{{ t.id }}">{{ t.nama_treatment }} — Rp {{ t.harga|floatformat:"0" }} ({{ t.durasi }} mnt)</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Pilih Tanggal -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold" style="font-size:13px; color:var(--brown);">
+            Tanggal Kunjungan <span class="text-danger">*</span>
+          </label>
+          <input type="date" name="tanggal_reservasi" id="inputTanggal"
+                 class="form-control" value="{{ tanggal_dipilih }}"
+                 min="{{ today }}" required>
+        </div>
+
+        <!-- Pilih Jam (slot visual) -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold d-flex justify-content-between" style="font-size:13px; color:var(--brown);">
+            <span>Jam Kunjungan <span class="text-danger">*</span></span>
+            <span style="font-size:11px; font-weight:400; color:#a08070;">
+              <span style="display:inline-block; width:12px; height:12px; background:#fff; border:1.5px solid #f0d8d0; border-radius:3px;"></span> Tersedia &nbsp;
+              <span style="display:inline-block; width:12px; height:12px; background:#fce4ec; border-radius:3px;"></span> Penuh
+            </span>
+          </label>
+
+          <input type="hidden" name="jam_reservasi" id="hiddenJam" required>
+
+          <div id="slotContainer" class="row g-2">
+            {% for slot in slots %}
+            <div class="col-3 col-md-2">
+              {% if slot.penuh %}
+              <div class="slot-item slot-penuh">
+                {{ slot.jam }}
+                <div style="font-size:9px; margin-top:2px;">Penuh</div>
+              </div>
+              {% else %}
+              <div class="slot-item slot-tersedia" onclick="pilihSlot(this, '{{ slot.jam }}')">
+                {{ slot.jam }}
+              </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+
+          <div id="jamDipilih" class="mt-2" style="font-size:12px; color:var(--peach-deep); display:none;">
+            ✓ Jam dipilih: <strong id="labelJam"></strong>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-peach w-100 py-2 mt-2" id="btnSubmit" disabled
+                style="opacity:.5; cursor:not-allowed;">
+          ✨ Pesan Sekarang
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+.slot-item {
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  user-select: none;
+}
+.slot-tersedia {
+  background: #fff;
+  border: 1.5px solid #f0d8d0;
+  color: var(--brown);
+}
+.slot-tersedia:hover {
+  background: var(--peach);
+  border-color: var(--peach-mid);
+  color: var(--peach-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201,123,110,.2);
+}
+.slot-dipilih {
+  background: linear-gradient(135deg, var(--peach-mid), var(--peach-deep)) !important;
+  border-color: var(--peach-deep) !important;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201,123,110,.35) !important;
+}
+.slot-penuh {
+  background: #fce4ec;
+  border: 1.5px solid #f8bbd0;
+  color: #c62828;
+  cursor: not-allowed;
+  opacity: .7;
+  font-size: 12px;
+}
+</style>
+
+<script>
+function pilihSlot(el, jam) {
+  // Reset semua
+  document.querySelectorAll('.slot-tersedia').forEach(s => {
+    s.classList.remove('slot-dipilih');
+  });
+  // Tandai yang dipilih
+  el.classList.add('slot-dipilih');
+  // Set hidden input
+  document.getElementById('hiddenJam').value = jam;
+  // Tampilkan label
+  document.getElementById('jamDipilih').style.display = 'block';
+  document.getElementById('labelJam').textContent = jam;
+  // Aktifkan tombol submit
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = false;
+  btn.style.opacity = '1';
+  btn.style.cursor = 'pointer';
+}
+
+// Refresh slot saat tanggal berubah
+document.getElementById('inputTanggal').addEventListener('change', function() {
+  const tanggal = this.value;
+  // Reset pilihan jam
+  document.getElementById('hiddenJam').value = '';
+  document.getElementById('jamDipilih').style.display = 'none';
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.style.opacity = '.5';
+  btn.style.cursor = 'not-allowed';
+
+  // Fetch slot baru via AJAX
+  fetch(`/reservasi/slots/?tanggal=${tanggal}`)
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('slotContainer');
+      container.innerHTML = '';
+      data.slots.forEach(slot => {
+        const col = document.createElement('div');
+        col.className = 'col-3 col-md-2';
+        if (slot.penuh) {
+          col.innerHTML = `
+            <div class="slot-item slot-penuh">
+              ${slot.jam}
+              <div style="font-size:9px;margin-top:2px;">Penuh</div>
+            </div>`;
+        } else {
+          col.innerHTML = `
+            <div class="slot-item slot-tersedia" onclick="pilihSlot(this,'${slot.jam}')">
+              ${slot.jam}
+            </div>`;
+        }
+        container.appendChild(col);
+      });
+    });
+});
+
+// Validasi form sebelum submit
+document.getElementById('formReservasi').addEventListener('submit', function(e) {
+  const jam = document.getElementById('hiddenJam').value;
+  const treatment = document.getElementById('selectTreatment').value;
+  const tanggal = document.getElementById('inputTanggal').value;
+  if (!jam || !treatment || !tanggal) {
+    e.preventDefault();
+    alert('Lengkapi semua pilihan: treatment, tanggal, dan jam!');
+  }
+});
+</script>
+
+{% endblock %}

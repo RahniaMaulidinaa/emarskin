@@ -1,0 +1,447 @@
+{% extends 'reservasi/base.html' %}
+{% block title %}Laporan Reservasi - Emarskin{% endblock %}
+{% block content %}
+
+<!-- Header layar -->
+<div class="d-flex justify-content-between align-items-start mb-2 no-print">
+  <div>
+    <p class="section-label mb-0">✦ Panel Admin</p>
+    <h3 class="page-title mb-0">Laporan Reservasi</h3>
+    <div class="divider-peach"></div>
+  </div>
+  <button onclick="window.print()" class="btn-gold d-flex align-items-center gap-2"
+          style="font-size:13px; padding:10px 22px;">
+    🖨️ Cetak Laporan
+  </button>
+</div>
+
+<!-- Filter -->
+<div class="card-em p-4 mb-4 no-print">
+  <form method="get" class="row g-3 align-items-end">
+    <div class="col-md-3">
+      <label class="form-label fw-semibold" style="font-size:13px; color:var(--brown);">Periode</label>
+      <select name="periode" class="form-select" onchange="this.form.submit()">
+        <option value="harian"   {% if periode == 'harian'   %}selected{% endif %}>📅 Harian</option>
+        <option value="mingguan" {% if periode == 'mingguan' %}selected{% endif %}>📆 Mingguan</option>
+        <option value="bulanan"  {% if periode == 'bulanan'  %}selected{% endif %}>🗓️ Bulanan</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label fw-semibold" style="font-size:13px; color:var(--brown);">Tanggal Referensi</label>
+      <input type="date" name="tanggal" class="form-control"
+             value="{{ tanggal_ref }}" max="{{ today }}">
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn-peach w-100" style="padding:10px;">Tampilkan</button>
+    </div>
+  </form>
+</div>
+
+<!-- Label periode layar -->
+<div class="no-print d-flex align-items-center gap-2 mb-4"
+     style="background:linear-gradient(135deg,#fff8f5,#fff0ec); border-radius:12px; padding:14px 20px; border:1px solid #f5d5cc;">
+  <span style="font-size:20px;">📊</span>
+  <div>
+    <div class="fw-bold" style="color:var(--brown); font-size:15px;">{{ label_periode }}</div>
+    <div style="font-size:12px; color:#a08070;">
+      Periode: {{ tgl_mulai|date:"d M Y" }}
+      {% if tgl_mulai != tgl_selesai %} – {{ tgl_selesai|date:"d M Y" }}{% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Statistik layar -->
+<div class="row g-3 mb-4 no-print">
+  <div class="col-6 col-md">
+    <div class="card-em p-3 text-center">
+      <div style="font-size:26px;">📋</div>
+      <div style="font-size:10px; color:#a08070; text-transform:uppercase; letter-spacing:.5px; margin:4px 0 2px;">Total</div>
+      <div class="fw-bold" style="font-size:28px; color:var(--brown);">{{ total }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md">
+    <div class="card-em p-3 text-center">
+      <div style="font-size:26px;">⏳</div>
+      <div style="font-size:10px; color:#a08070; text-transform:uppercase; letter-spacing:.5px; margin:4px 0 2px;">Menunggu</div>
+      <div class="fw-bold" style="font-size:28px; color:#e65100;">{{ total_menunggu }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md">
+    <div class="card-em p-3 text-center">
+      <div style="font-size:26px;">✅</div>
+      <div style="font-size:10px; color:#a08070; text-transform:uppercase; letter-spacing:.5px; margin:4px 0 2px;">Terkonfirmasi</div>
+      <div class="fw-bold" style="font-size:28px; color:#2e7d32;">{{ total_konfirm }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md">
+    <div class="card-em p-3 text-center">
+      <div style="font-size:26px;">🎉</div>
+      <div style="font-size:10px; color:#a08070; text-transform:uppercase; letter-spacing:.5px; margin:4px 0 2px;">Selesai</div>
+      <div class="fw-bold" style="font-size:28px; color:#1565c0;">{{ total_selesai }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md">
+    <div class="card-em p-3 text-center">
+      <div style="font-size:26px;">❌</div>
+      <div style="font-size:10px; color:#a08070; text-transform:uppercase; letter-spacing:.5px; margin:4px 0 2px;">Dibatalkan</div>
+      <div class="fw-bold" style="font-size:28px; color:#c62828;">{{ total_batal }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Rekap treatment layar -->
+{% if rekap_treatment %}
+<div class="mb-4 no-print">
+  <h6 class="fw-bold mb-3" style="color:var(--brown);">📊 Rekap per Treatment</h6>
+  <div class="card-em overflow-hidden">
+    <table class="table tbl-em mb-0">
+      <thead>
+        <tr>
+          <th>Treatment</th>
+          <th class="text-center">Jumlah</th>
+          <th>Persentase</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rekap_treatment %}
+        <tr>
+          <td class="fw-semibold">{{ r.treatment__nama_treatment }}</td>
+          <td class="text-center fw-bold" style="color:var(--peach-deep);">{{ r.jumlah }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div style="flex:1; background:#fdf0ec; border-radius:4px; height:8px; overflow:hidden;">
+                {% if total > 0 %}
+                <div style="width:{% widthratio r.jumlah total 100 %}%; height:100%; background:linear-gradient(90deg,var(--peach-mid),var(--peach-deep)); border-radius:4px;"></div>
+                {% endif %}
+              </div>
+              <span style="font-size:12px; color:#a08070; min-width:35px;">
+                {% if total > 0 %}{% widthratio r.jumlah total 100 %}%{% else %}0%{% endif %}
+              </span>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<!-- Tabel detail layar -->
+<div class="no-print">
+  <h6 class="fw-bold mb-3" style="color:var(--brown);">📋 Detail Reservasi</h6>
+  {% if reservasis %}
+  <div class="card-em overflow-hidden">
+    <table class="table tbl-em mb-0">
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>No. Antrian</th>
+          <th>Pelanggan</th>
+          <th>Treatment</th>
+          <th>Tanggal</th>
+          <th>Jam</th>
+          <th>Waktu Pesan</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservasis %}
+        <tr>
+          <td style="color:#a08070;">{{ forloop.counter }}</td>
+          <td class="fw-bold" style="color:var(--peach-deep);">#{{ r.nomor_antrian }}</td>
+          <td>{{ r.pelanggan.nama }}</td>
+          <td>{{ r.treatment.nama_treatment }}</td>
+          <td>{{ r.tanggal_reservasi|date:"d M Y" }}</td>
+          <td>{{ r.jam_reservasi|time:"H:i" }}</td>
+          <td>{{ r.waktu_pesan|date:"d M Y H:i" }}</td>
+          <td>
+            <span class="s-{{ r.status_reservasi }}">
+              {% if r.status_reservasi == 'menunggu' %}⏳ Menunggu
+              {% elif r.status_reservasi == 'terkonfirmasi' %}✅ Terkonfirmasi
+              {% elif r.status_reservasi == 'selesai' %}🎉 Selesai
+              {% elif r.status_reservasi == 'dibatalkan' %}❌ Dibatalkan
+              {% endif %}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="card-em p-5 text-center">
+    <div style="font-size:48px; margin-bottom:12px;">📭</div>
+    <h6 class="fw-bold" style="color:var(--brown);">Tidak Ada Data</h6>
+    <p class="text-muted small mb-0">Tidak ada reservasi pada periode yang dipilih.</p>
+  </div>
+  {% endif %}
+</div>
+
+
+<!-- ============================================================ -->
+<!--                    AREA CETAK PROFESIONAL                    -->
+<!-- ============================================================ -->
+<div class="print-only" id="printDoc">
+<div class="print-page">
+
+  <!-- KOP SURAT -->
+  <div class="print-kop">
+    <div class="print-kop-inner">
+      <div class="print-logo-area">
+        <img src="/static/reservasi/img/logo.png" alt="Emarskin" class="print-logo">
+      </div>
+      <div class="print-kop-text">
+        <div class="print-kop-nama">EMARSKIN BEAUTY POINT</div>
+        <div class="print-kop-sub">Klinik Kecantikan Premium</div>
+        <div class="print-kop-alamat">Bandung, Jawa Barat &nbsp;|&nbsp; emarskin.id</div>
+      </div>
+    </div>
+    <div class="print-kop-line"></div>
+  </div>
+
+  <!-- JUDUL LAPORAN -->
+  <div class="print-judul-wrap">
+    <div class="print-judul">LAPORAN DATA RESERVASI</div>
+    <div class="print-subjudul">{{ label_periode }}</div>
+    <div class="print-meta">
+      Periode&nbsp;:&nbsp;{{ tgl_mulai|date:"d F Y" }}
+      {% if tgl_mulai != tgl_selesai %}&nbsp;&ndash;&nbsp;{{ tgl_selesai|date:"d F Y" }}{% endif %}
+    </div>
+    <div class="print-meta">Dicetak pada&nbsp;:&nbsp;{% now "d F Y, H:i" %} WIB</div>
+  </div>
+
+  <!-- RINGKASAN STATISTIK -->
+  <div class="print-section-title">I. RINGKASAN</div>
+  <table class="print-stat-table">
+    <tr>
+      <td class="print-stat-box">
+        <div class="print-stat-num">{{ total }}</div>
+        <div class="print-stat-label">Total Reservasi</div>
+      </td>
+      <td class="print-stat-box">
+        <div class="print-stat-num" style="color:#e65100;">{{ total_menunggu }}</div>
+        <div class="print-stat-label">Menunggu</div>
+      </td>
+      <td class="print-stat-box">
+        <div class="print-stat-num" style="color:#2e7d32;">{{ total_konfirm }}</div>
+        <div class="print-stat-label">Terkonfirmasi</div>
+      </td>
+      <td class="print-stat-box">
+        <div class="print-stat-num" style="color:#1565c0;">{{ total_selesai }}</div>
+        <div class="print-stat-label">Selesai</div>
+      </td>
+      <td class="print-stat-box" style="border-right:none;">
+        <div class="print-stat-num" style="color:#c62828;">{{ total_batal }}</div>
+        <div class="print-stat-label">Dibatalkan</div>
+      </td>
+    </tr>
+  </table>
+
+  <!-- REKAP PER TREATMENT -->
+  {% if rekap_treatment %}
+  <div class="print-section-title" style="margin-top:18px;">II. REKAP PER TREATMENT</div>
+  <table class="print-table">
+    <thead>
+      <tr>
+        <th style="width:30px;">No.</th>
+        <th>Nama Treatment</th>
+        <th style="text-align:center; width:120px;">Jumlah Reservasi</th>
+        <th style="text-align:center; width:100px;">Persentase</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rekap_treatment %}
+      <tr>
+        <td style="text-align:center; color:#888;">{{ forloop.counter }}</td>
+        <td>{{ r.treatment__nama_treatment }}</td>
+        <td style="text-align:center; font-weight:600;">{{ r.jumlah }}</td>
+        <td style="text-align:center;">
+          {% if total > 0 %}{% widthratio r.jumlah total 100 %}%{% else %}0%{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  <!-- DETAIL RESERVASI -->
+  <div class="print-section-title" style="margin-top:18px;">
+    III. DETAIL DATA RESERVASI
+  </div>
+  {% if reservasis %}
+  <table class="print-table">
+    <thead>
+      <tr>
+        <th style="width:28px; text-align:center;">No.</th>
+        <th style="width:50px; text-align:center;">Antrian</th>
+        <th>Nama Pelanggan</th>
+        <th>Treatment</th>
+        <th style="width:80px;">Tanggal</th>
+        <th style="width:40px; text-align:center;">Jam</th>
+        <th style="width:110px;">Waktu Pesan</th>
+        <th style="width:80px; text-align:center;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in reservasis %}
+      <tr>
+        <td style="text-align:center; color:#888;">{{ forloop.counter }}</td>
+        <td style="text-align:center; font-weight:700;">#{{ r.nomor_antrian }}</td>
+        <td>{{ r.pelanggan.nama }}</td>
+        <td>{{ r.treatment.nama_treatment }}</td>
+        <td>{{ r.tanggal_reservasi|date:"d/m/Y" }}</td>
+        <td style="text-align:center;">{{ r.jam_reservasi|time:"H:i" }}</td>
+        <td style="font-size:8.5px;">{{ r.waktu_pesan|date:"d/m/Y H:i" }}</td>
+        <td style="text-align:center;">
+          <span class="print-badge print-badge-{{ r.status_reservasi }}">
+            {{ r.get_status_reservasi_display }}
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="7" style="text-align:right; font-weight:700; padding:7px 10px; font-size:10px; border-top:1.5px solid #5C3317;">
+          TOTAL RESERVASI
+        </td>
+        <td style="text-align:center; font-weight:700; font-size:12px; border-top:1.5px solid #5C3317; color:#5C3317;">
+          {{ total }}
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+  {% else %}
+  <p style="font-size:11px; color:#888; font-style:italic; margin-top:8px;">
+    Tidak ada data reservasi pada periode ini.
+  </p>
+  {% endif %}
+
+  <!-- TANDA TANGAN -->
+  <div class="print-ttd">
+    <div class="print-ttd-kiri">
+      <div style="font-size:10px; color:#666; font-style:italic;">
+        Laporan ini digenerate secara otomatis oleh<br>Sistem Informasi Reservasi Emarskin Beauty Point.
+      </div>
+    </div>
+    <div class="print-ttd-kanan">
+      <div style="font-size:10px; margin-bottom:4px;">Bandung, {% now "d F Y" %}</div>
+      <div style="font-size:10px; font-weight:600;">Admin Emarskin Beauty Point</div>
+      <div style="margin: 44px 0 4px;"></div>
+      <div style="border-top:1px solid #333; width:160px; padding-top:4px; font-size:10px;">
+        ( __________________________ )
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER HALAMAN -->
+  <div class="print-footer">
+    <div>Emarskin Beauty Point &copy; {% now "Y" %} &mdash; Dokumen ini bersifat resmi</div>
+    <div>Halaman 1</div>
+  </div>
+
+</div><!-- .print-page -->
+</div><!-- .print-only -->
+
+
+<style>
+/* ── LAYAR ── */
+.no-print  { }
+.print-only { display: none; }
+
+/* ── PRINT ── */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  /* Sembunyikan semua UI layar */
+  .no-print,
+  .navbar-emarskin,
+  footer,
+  .container > *:not(#printDoc) { display: none !important; }
+
+  .print-only { display: block !important; }
+
+  body { margin:0; padding:0; background:white; font-family: 'Times New Roman', serif; }
+  .container { max-width:100% !important; padding:0 !important; margin:0 !important; }
+
+  /* Halaman cetak */
+  .print-page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 16mm 18mm 16mm 18mm;
+    background: white;
+    position: relative;
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+    color: #222;
+  }
+
+  /* KOP */
+  .print-kop { margin-bottom: 10px; }
+  .print-kop-inner { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+  .print-logo { height: 52px; }
+  .print-logo-area { flex-shrink: 0; }
+  .print-kop-text { flex: 1; }
+  .print-kop-nama { font-size: 17pt; font-weight: 700; color: #5C3317; letter-spacing: 1px; font-family: 'Times New Roman', serif; }
+  .print-kop-sub  { font-size: 10pt; color: #8B4513; margin: 1px 0; }
+  .print-kop-alamat { font-size: 8.5pt; color: #888; }
+  .print-kop-line { height: 3px; background: linear-gradient(90deg, #5C3317, #D4A843, #C97B6E); border-radius: 2px; margin-top: 6px; }
+
+  /* JUDUL */
+  .print-judul-wrap { text-align: center; margin: 14px 0 16px; }
+  .print-judul { font-size: 13pt; font-weight: 700; letter-spacing: 2px; color: #222; text-decoration: underline; font-family: 'Times New Roman', serif; }
+  .print-subjudul { font-size: 10.5pt; color: #5C3317; margin: 4px 0 2px; font-weight: 600; }
+  .print-meta { font-size: 9pt; color: #666; margin: 1px 0; }
+
+  /* SECTION TITLE */
+  .print-section-title {
+    font-size: 10pt; font-weight: 700; color: #5C3317;
+    border-bottom: 1.5px solid #5C3317;
+    padding-bottom: 3px; margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: .5px;
+  }
+
+  /* STAT TABLE */
+  .print-stat-table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+  .print-stat-box {
+    border: 1px solid #ddd; text-align: center;
+    padding: 8px 4px; width: 20%;
+    background: #fffaf8;
+  }
+  .print-stat-num { font-size: 20pt; font-weight: 700; color: #5C3317; line-height: 1.1; }
+  .print-stat-label { font-size: 8pt; color: #888; margin-top: 2px; }
+
+  /* DATA TABLE */
+  .print-table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+  .print-table thead tr { background: #5C3317 !important; color: white !important; }
+  .print-table thead th { padding: 7px 8px; text-align: left; font-weight: 600; border: 1px solid #5C3317; font-size: 8.5pt; }
+  .print-table tbody td { padding: 6px 8px; border: 1px solid #e0d0c8; vertical-align: middle; }
+  .print-table tbody tr:nth-child(even) { background: #fffaf8 !important; }
+  .print-table tfoot td { background: #fffaf8 !important; }
+
+  /* BADGE STATUS */
+  .print-badge { font-size: 7.5pt; padding: 2px 6px; border-radius: 3px; font-weight: 600; display: inline-block; }
+  .print-badge-menunggu     { background: #fff3e0; color: #e65100; }
+  .print-badge-terkonfirmasi{ background: #e8f5e9; color: #2e7d32; }
+  .print-badge-selesai      { background: #e3f2fd; color: #1565c0; }
+  .print-badge-dibatalkan   { background: #fce4ec; color: #c62828; }
+
+  /* TTD */
+  .print-ttd { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; }
+  .print-ttd-kiri  { flex: 1; }
+  .print-ttd-kanan { text-align: center; min-width: 200px; }
+
+  /* FOOTER HALAMAN */
+  .print-footer {
+    position: fixed; bottom: 10mm; left: 18mm; right: 18mm;
+    border-top: 1px solid #ccc;
+    padding-top: 4px;
+    display: flex; justify-content: space-between;
+    font-size: 8pt; color: #999;
+  }
+}
+</style>
+
+{% endblock %}

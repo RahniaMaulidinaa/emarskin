@@ -1,0 +1,32 @@
+{% extends 'reservasi/base.html' %}
+{% block title %}Login - Emarskin{% endblock %}
+{% block content %}
+<div class="row justify-content-center py-4">
+  <div class="col-md-5 col-lg-4">
+    <div class="text-center mb-4">
+      <h3 class="page-title">Selamat Datang</h3>
+      <div class="divider-peach mx-auto"></div>
+      <p class="page-subtitle">Masuk ke akun Emarskin kamu</p>
+    </div>
+    <div class="card-emarskin p-4">
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold" style="font-size:13px; color:var(--brown-soft);">Username</label>
+          <input type="text" name="username" class="form-control" placeholder="Masukkan username" required>
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-semibold" style="font-size:13px; color:var(--brown-soft);">Password</label>
+          <input type="password" name="password" class="form-control" placeholder="Masukkan password" required>
+        </div>
+        <button type="submit" class="btn-peach w-100 py-2">Masuk</button>
+      </form>
+      <hr style="border-color:#f5e8e3; margin: 20px 0;">
+      <p class="text-center mb-0 small" style="color:#a08070;">
+        Belum punya akun?
+        <a href="{% url 'register' %}" style="color:var(--peach-deep); font-weight:600; text-decoration:none;">Daftar di sini</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
