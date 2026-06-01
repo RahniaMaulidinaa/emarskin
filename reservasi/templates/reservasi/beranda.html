@@ -31,26 +31,49 @@
 </div>
 
 <!-- KEUNGGULAN -->
-<div class="row g-3 mb-5">
-  <div class="col-md-4">
-    <div class="card-em p-4 text-center h-100" style="border-top: 3px solid var(--peach-mid);">
-      <div style="font-size:38px; margin-bottom:12px;">🌸</div>
-      <h6 class="fw-bold mb-2" style="color:var(--brown);">Tenaga Profesional</h6>
-      <p class="text-muted small mb-0">Ditangani beautician berpengalaman dan bersertifikat.</p>
+<div class="mb-5">
+  <p class="section-label text-center">✦ Mengapa Memilih Emarskin</p>
+  <h3 class="page-title text-center">Keunggulan Kami</h3>
+  <div class="divider-peach mx-auto"></div>
+
+  <div class="row g-3 mt-4">
+    <div class="col-md-4">
+      <div class="card-em p-4 text-center h-100" style="border-top: 3px solid var(--peach-mid);">
+        <div style="font-size:38px; margin-bottom:12px;">🌸</div>
+        <h6 class="fw-bold mb-2" style="color:var(--brown);">
+          Terapis Profesional
+        </h6>
+        <p class="text-muted small mb-0">
+          Ditangani oleh tenaga profesional yang berpengalaman dalam memberikan
+          perawatan kecantikan dengan pelayanan terbaik.
+        </p>
+      </div>
     </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card-em p-4 text-center h-100" style="border-top: 3px solid var(--gold-light);">
-      <div style="font-size:38px; margin-bottom:12px;">⏱️</div>
-      <h6 class="fw-bold mb-2" style="color:var(--brown);">Antrian FCFS Otomatis</h6>
-      <p class="text-muted small mb-0">Sistem antrian adil berdasarkan urutan waktu pemesanan.</p>
+
+    <div class="col-md-4">
+      <div class="card-em p-4 text-center h-100" style="border-top: 3px solid var(--gold-light);">
+        <div style="font-size:38px; margin-bottom:12px;">📅</div>
+        <h6 class="fw-bold mb-2" style="color:var(--brown);">
+          Reservasi Online Mudah
+        </h6>
+        <p class="text-muted small mb-0">
+          Pelanggan dapat melakukan reservasi kapan saja dan di mana saja
+          melalui website tanpa harus datang langsung ke klinik.
+        </p>
+      </div>
     </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card-em p-4 text-center h-100" style="border-top: 3px solid var(--peach-deep);">
-      <div style="font-size:38px; margin-bottom:12px;">💆‍♀️</div>
-      <h6 class="fw-bold mb-2" style="color:var(--brown);">Produk Premium</h6>
-      <p class="text-muted small mb-0">Menggunakan produk perawatan kulit berkualitas tinggi.</p>
+
+    <div class="col-md-4">
+      <div class="card-em p-4 text-center h-100" style="border-top: 3px solid var(--peach-deep);">
+        <div style="font-size:38px; margin-bottom:12px;">⏱️</div>
+        <h6 class="fw-bold mb-2" style="color:var(--brown);">
+          Antrian FCFS Otomatis
+        </h6>
+        <p class="text-muted small mb-0">
+          Sistem First Come First Serve (FCFS) membantu mengatur urutan
+          pelayanan secara otomatis dan lebih adil.
+        </p>
+      </div>
     </div>
   </div>
 </div>
@@ -93,6 +116,45 @@
   {% endfor %}
 </div>
 
+<!-- STATISTIK -->
+<div class="rounded-4 p-5 mb-5"
+     style="background:#fff; border:1px solid #f4d8d0;">
+
+  <div class="text-center mb-4">
+    <p class="section-label">✦ Emarskin Dalam Angka</p>
+    <h3 class="page-title">Kepercayaan Pelanggan Kami</h3>
+    <div class="divider-peach mx-auto"></div>
+  </div>
+
+  <div class="row text-center">
+
+    <div class="col-md-3 col-6 mb-4 stat-item">
+      <h2 class="counter" data-target="2000"
+          style="color:var(--gold); font-size:42px; font-weight:700;">0</h2>
+      <p class="mb-0 text-muted">Pelanggan Terdaftar</p>
+    </div>
+
+    <div class="col-md-3 col-6 mb-4 stat-item">
+      <h2 class="counter" data-target="1000"
+          style="color:var(--gold); font-size:42px; font-weight:700;">0</h2>
+      <p class="mb-0 text-muted">Reservasi Selesai</p>
+    </div>
+
+    <div class="col-md-3 col-6 mb-4 stat-item">
+      <h2 class="counter" data-target="50"
+          style="color:var(--gold); font-size:42px; font-weight:700;">0</h2>
+      <p class="mb-0 text-muted">Jenis Treatment</p>
+    </div>
+
+    <div class="col-md-3 col-6 mb-4 stat-item">
+      <h2 class="counter" data-target="95"
+          style="color:var(--gold); font-size:42px; font-weight:700;">0</h2>
+      <p class="mb-0 text-muted">Kepuasan Pelanggan</p>
+    </div>
+
+  </div>
+</div>
+
 <!-- CTA BOTTOM -->
 <div class="rounded-4 p-5 text-center mb-4"
      style="background: linear-gradient(135deg, #FADADD, #F0A898); border: 1px solid #f0c0b0;">
@@ -101,4 +163,73 @@
   <a href="{% url 'reservasi_form' %}" class="btn-gold" style="font-size:14px;">✨ Mulai Reservasi</a>
 </div>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const statItems = document.querySelectorAll(".stat-item");
+
+    const startCounter = (counter) => {
+
+        const target = +counter.dataset.target;
+        let current = 0;
+
+        const updateCounter = () => {
+
+            const increment = target / 50;
+
+            if(current < target){
+
+                current += increment;
+                counter.innerText = Math.ceil(current);
+
+                requestAnimationFrame(updateCounter);
+
+            }else{
+
+                if(target === 95){
+                    counter.innerText = target + "%";
+                }else{
+                    counter.innerText = target.toLocaleString() + "+";
+                }
+
+            }
+
+        };
+
+        updateCounter();
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+
+        entries.forEach(entry => {
+
+            if(entry.isIntersecting){
+
+                entry.target.classList.add("show");
+
+                const counter =
+                    entry.target.querySelector(".counter");
+
+                if(
+                    counter &&
+                    !counter.classList.contains("counted")
+                ){
+                    counter.classList.add("counted");
+                    startCounter(counter);
+                }
+
+            }
+
+        });
+
+    },{
+        threshold:0.4
+    });
+
+    statItems.forEach(item => {
+        observer.observe(item);
+    });
+
+});
+</script>
 {% endblock %}
