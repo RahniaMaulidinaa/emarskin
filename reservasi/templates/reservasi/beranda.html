@@ -89,6 +89,16 @@
   {% for t in treatments %}
   <div class="col-md-4">
     <div class="card-em h-100">
+      {% if t.gambar %}
+<img src="{{ t.gambar.url }}"
+     alt="{{ t.nama_treatment }}"
+     style="
+        width:100%;
+        height:220px;
+        object-fit:cover;
+        border-radius:16px 16px 0 0;
+     ">
+{% endif %}
       <div style="height:5px; background:linear-gradient(90deg, var(--peach-mid), var(--gold-light)); border-radius:16px 16px 0 0;"></div>
       <div class="p-4">
         <div class="d-flex justify-content-between align-items-start mb-2">

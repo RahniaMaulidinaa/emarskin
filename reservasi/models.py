@@ -18,6 +18,12 @@ class Treatment(models.Model):
     durasi = models.IntegerField(help_text="Durasi dalam menit")
     harga = models.DecimalField(max_digits=10, decimal_places=0)
 
+    gambar = models.ImageField(
+        upload_to='treatments/',
+        blank=True,
+        null=True
+    )
+
     def __str__(self):
         return self.nama_treatment
 
