@@ -153,8 +153,8 @@
           <td>{{ r.pelanggan.nama }}</td>
           <td>{{ r.treatment.nama_treatment }}</td>
           <td>{{ r.tanggal_reservasi|date:"d M Y" }}</td>
-          <td>{{ r.jam_reservasi|time:"H:i" }}</td>
-          <td>{{ r.waktu_pesan|date:"d M Y H:i" }}</td>
+          <td>{{ r.jam_reservasi|time:"H:i:s" }}</td>
+          <td>{{ r.waktu_pesan|date:"d M Y H:i:s" }}</td>
           <td>
             <span class="s-{{ r.status_reservasi }}">
               {% if r.status_reservasi == 'menunggu' %}⏳ Menunggu
@@ -208,7 +208,7 @@
       Periode&nbsp;:&nbsp;{{ tgl_mulai|date:"d F Y" }}
       {% if tgl_mulai != tgl_selesai %}&nbsp;&ndash;&nbsp;{{ tgl_selesai|date:"d F Y" }}{% endif %}
     </div>
-    <div class="print-meta">Dicetak pada&nbsp;:&nbsp;{% now "d F Y, H:i" %} WIB</div>
+    <div class="print-meta">Dicetak pada&nbsp;:&nbsp;{% now "d F Y, H:i:s" %} WIB</div>
   </div>
 
   <!-- RINGKASAN STATISTIK -->
@@ -291,8 +291,8 @@
         <td>{{ r.pelanggan.nama }}</td>
         <td>{{ r.treatment.nama_treatment }}</td>
         <td>{{ r.tanggal_reservasi|date:"d/m/Y" }}</td>
-        <td style="text-align:center;">{{ r.jam_reservasi|time:"H:i" }}</td>
-        <td style="font-size:8.5px;">{{ r.waktu_pesan|date:"d/m/Y H:i" }}</td>
+        <td style="text-align:center;">{{ r.jam_reservasi|time:"H:i:s" }}</td>
+        <td style="font-size:8.5px;">{{ r.waktu_pesan|date:"d/m/Y H:i:s" }}</td>
         <td style="text-align:center;">
           <span class="print-badge print-badge-{{ r.status_reservasi }}">
             {{ r.get_status_reservasi_display }}
@@ -368,7 +368,7 @@
   /* Halaman cetak */
   .print-page {
     width: 210mm;
-    min-height: 297mm;
+    height: auto;
     margin: 0 auto;
     padding: 16mm 18mm 16mm 18mm;
     background: white;

@@ -147,10 +147,16 @@
         {% if user.is_authenticated %}
           {% if user.is_staff %}
             <a href="{% url 'dashboard_admin' %}" class="nav-link-custom">Dashboard</a>
+            <a href="{% url 'beranda' %}#keunggulan" class="nav-link-custom">Keunggulan</a>
+            <a href="{% url 'beranda' %}#layanan" class="nav-link-custom">Layanan</a>
+            <a href="{% url 'beranda' %}#tentang" class="nav-link-custom">Tentang</a>
             <a href="{% url 'kelola_reservasi' %}" class="nav-link-custom">Kelola Reservasi</a>
             <a href="{% url 'laporan_reservasi' %}" class="nav-link-custom">Laporan</a>
           {% else %}
             <a href="{% url 'beranda' %}" class="nav-link-custom">Beranda</a>
+            <a href="{% url 'beranda' %}#keunggulan" class="nav-link-custom">Keunggulan</a>
+            <a href="{% url 'beranda' %}#layanan" class="nav-link-custom">Layanan</a>
+            <a href="{% url 'beranda' %}#tentang" class="nav-link-custom">Tentang</a>
             <a href="{% url 'reservasi_form' %}" class="nav-link-custom">Reservasi</a>
             <a href="{% url 'status_riwayat' %}" class="nav-link-custom">Status</a>
           {% endif %}
@@ -158,6 +164,9 @@
           <a href="{% url 'logout' %}" class="btn-nav-logout">Logout</a>
         {% else %}
           <a href="{% url 'beranda' %}" class="nav-link-custom">Beranda</a>
+          <a href="{% url 'beranda' %}#keunggulan" class="nav-link-custom">Keunggulan</a>
+          <a href="{% url 'beranda' %}#layanan" class="nav-link-custom">Layanan</a>
+          <a href="{% url 'beranda' %}#statistik" class="nav-link-custom">Tentang</a>
           <a href="{% url 'login' %}" class="nav-link-custom">Login</a>
           <a href="{% url 'register' %}" class="btn-nav-daftar">Daftar</a>
         {% endif %}
@@ -193,5 +202,19 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.querySelectorAll('a[href*="#"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      const hash = href.substring(href.indexOf('#'));
+      const target = document.querySelector(hash);
+      if (target) {
+        e.preventDefault();
+        const offset = document.querySelector('.navbar-emarskin')?.offsetHeight || 70;
+        window.scrollTo({ top: target.offsetTop - offset - 16, behavior: 'smooth' });
+      }
+    });
+  });
+  </script>
 </body>
 </html>

@@ -32,8 +32,8 @@
         <td>{{ r.pelanggan.nama }}</td>
         <td>{{ r.treatment.nama_treatment }}</td>
         <td>{{ r.tanggal_reservasi|date:"d M Y" }}</td>
-        <td>{{ r.jam_reservasi|time:"H:i" }}</td>
-        <td>{{ r.waktu_pesan|date:"d M Y H:i" }}</td>
+        <td>{{ r.jam_reservasi|time:"H:i:s" }}</td>
+        <td>{{ r.waktu_pesan|date:"d M Y H:i:s" }}</td>
         <td>
           <span class="status-{{ r.status_reservasi }}">
             {% if r.status_reservasi == 'menunggu' %}⏳ Menunggu
